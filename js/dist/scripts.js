@@ -477,8 +477,8 @@ var MY_UTILS = (function( $ ) {
 		]
 	};
 
-	// TEST – TODO: remove
-	
+	// TEST (test configuration joint and single election) – TODO: remove
+/*	
 	var currentElectionPreset = {
 		"Vorstand": [
 			{
@@ -637,9 +637,9 @@ var MY_UTILS = (function( $ ) {
 			}
 		]
 	};
+*/
 
-/*
-	// TEST – TODO: remove
+	// TEST (test configuration joint election) – TODO: remove
 	var currentElectionPreset = {
 		"Vorstand": [
 			{
@@ -861,8 +861,9 @@ var MY_UTILS = (function( $ ) {
 			}
 		]
 	};
-*/
+
 	// TEST – TODO: remove
+/*
 	var testElectionResult = {
 		"Vorstand": [
 			{
@@ -1208,6 +1209,7 @@ var MY_UTILS = (function( $ ) {
 			}
 		]
 	};
+*/
 
 	// TODO: load existing config instead of this?
 	var currentElectionConfig = ( !! currentElectionPreset ) ? $.extend( {}, electionConfig, currentElectionPreset ) : $.extend( {}, electionConfig );
@@ -1540,7 +1542,7 @@ var MY_UTILS = (function( $ ) {
 	- "explanation" habe ich erstmal weggelassen, da die Ergebnisse von der Oberlfäche ohnehin angezeigt werden, und ich gerne Daten und Oberflächenstruktur voneinander trennen würde
 
 
-	(FALL 1: gemeinsame Wahl)
+	(FALL 1: gemeinsame Wahl -> "joint" == true bzw. typeof "current" === 'string' )
 
 	input = {
 		"structure": [
@@ -1642,7 +1644,7 @@ var MY_UTILS = (function( $ ) {
 		]
 	}
 
-	(FALL 2: einzelne Wahl)
+	(FALL 2: einzelne Wahl -> "joint" == true bzw. typeof "current" === 'object')
 
 	input = {
 		"structure": [
@@ -1892,22 +1894,7 @@ var MY_UTILS = (function( $ ) {
 
 						// fill electionCalculationInput
 						electionCalculationInput.current = currentElectionConfig[ key ][ i ].name;
-
-						/*if ( i === 0 ) {
-							// reset previous at fist election within election group
-							electionCalculationInput.previous = [];
-						}
-						else {
-							// all following elections if results copy into previous
-							var previousI = i - 1;
-							if ( typeof currentElectionConfig[ key ][ previousI ].results !== 'undefined' && currentElectionConfig[ key ][ previousI ].results.length > 0 ) {
-								for ( var k = 0; k < currentElectionConfig[ key ][ previousI ].results.length; k++ ) {
-									electionCalculationInput.previous.push( currentElectionConfig[ key ][ previousI ].results[ k ] );
-								}
-							}
-						}*/
 						_setPrevious();
-
 						electionCalculationInput.candidates = currentElectionConfig[ key ][ i ].candidates;
 
 						// call election tool
@@ -1931,21 +1918,6 @@ var MY_UTILS = (function( $ ) {
 					// election single, multiple candidates lists
 
 					// fill electionCalculationInput
-
-					/*if ( i === 0 ) {
-						// reset previous at fist election within election group
-						electionCalculationInput.previous = [];
-					}
-					else {
-						// all following elections if results copy into previous
-						var previousI = i - 1;
-						if ( typeof currentElectionConfig[ key ][ previousI ].results !== 'undefined' && currentElectionConfig[ key ][ previousI ].results.length > 0 ) {
-							for ( var k = 0; k < currentElectionConfig[ key ][ previousI ].results.length; k++ ) {
-								electionCalculationInput.previous.push( currentElectionConfig[ key ][ previousI ].results[ k ] );
-							}
-						}
-					}*/
-					
 					_setPrevious();
 
 					for ( var j = 0; j < currentElectionConfig[ key ][ i ].candidates.length; j++ ) {
@@ -3223,310 +3195,6 @@ EXAMPLE 2:
 } )( jQuery, MY_UTILS );
 
 /*
- * Lazy Load - jQuery plugin for lazy loading images
- *
- * Copyright (c) 2007-2013 Mika Tuupola
- *
- * Licensed under the MIT license:
- *   http://www.opensource.org/licenses/mit-license.php
- *
- * Project home:
- *   http://www.appelsiini.net/projects/lazyload
- *
- * Version:  1.9.3
- * 
- */
-
-(function($, window, document, undefined) {
-    var $window = $(window);
-    var $document = $(document);
-
-    $.fn.lazyload = function(options) {
-        var elements = this;
-        var $container;
-        var settings = {
-            threshold       : 0,
-            failure_limit   : 0,
-            event           : "scroll",
-            effect          : "show",
-            container       : window,
-            data_attribute  : "original",
-            skip_invisible  : true,
-            appear          : null,
-            load            : null,
-            placeholder     : "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAQAAAC0NkA6AAAALklEQVR42u3NMQEAAAgDoC2G/YuawcMPCtBM3lUikUgkEolEIpFIJBKJRCKR3CwjqQUVkFI2GQAAAABJRU5ErkJggg=="
-        };
-
-        function update() {
-			
-            var counter = 0;
-
-            elements.each(function() {
-                var $this = $(this);
-                if (settings.skip_invisible && !$this.is(":visible")) {
-                    return;
-                }
-                if ($.abovethetop(this, settings) ||
-                    $.leftofbegin(this, settings)) {
-                        /* Nothing. */
-                } else if (!$.belowthefold(this, settings) &&
-                    !$.rightoffold(this, settings)) {
-                        $this.trigger("appear");
-                        /* if we found an image we'll load, reset the counter */
-                        counter = 0;
-                } else {
-                    if (++counter > settings.failure_limit) {
-                        return false;
-                    }
-                }
-            });
-
-        }
-
-        if(options) {
-            /* Maintain BC for a couple of versions. */
-            if (undefined !== options.failurelimit) {
-                options.failure_limit = options.failurelimit;
-                delete options.failurelimit;
-            }
-            if (undefined !== options.effectspeed) {
-                options.effect_speed = options.effectspeed;
-                delete options.effectspeed;
-            }
-
-            $.extend(settings, options);
-        }
-
-        /* Cache container as jQuery as object. */
-        $container = (settings.container === undefined ||
-                      settings.container === window) ? $window : $(settings.container);
-
-        /* Fire one scroll event per scroll. Not one scroll event per image. */
-        if (0 === settings.event.indexOf("scroll")) {
-            $container.bind(settings.event, function() {
-                return update();
-            });
-        }
-
-        this.each(function() {
-            var self = this;
-            var $self = $(self);
-
-            self.loaded = false;
-			
-			// resize function
-			$.fn.resizeUnloadImg = function() {
-				var $img = $( this );
-				var origImgWidth = $img.attr( 'width' );
-				var origImgHeight = $img.attr( 'height' );
-				if ( !! origImgWidth && !! origImgHeight ) {
-					// reset
-					$img.css( { width: '', height: '' } );
-					var cssImgWidth = parseInt( $img.css( 'width' ) );
-					var calcImgWidth = origImgWidth;
-					var calcImgHeight = origImgHeight;
-					if ( cssImgWidth != origImgWidth ) {
-						calcImgWidth = cssImgWidth;
-						calcImgHeight = origImgHeight / origImgWidth * cssImgWidth;
-					}
-					// set
-					$img.css( { width: calcImgWidth + 'px', height: calcImgHeight + 'px' } );
-				}
-			}
-
-            /* If no src attribute given use data:uri. */
-            if ( $self.is( 'img' ) && ! $self.attr( 'src' ) ) {
-			
-				/* custom adaption: set sizes to unload images after placeholder is set */
-				
-				$self				
-					.one( 'load', function() {
-				
-						var origImgWidth = $self.attr( 'width' );
-						var origImgHeight = $self.attr( 'height' );
-
-						if ( !! origImgWidth && !! origImgHeight ) {
-
-							// generate event id
-							var eventId = $self.attr( 'data-' + settings.data_attribute ).replace(/[/.]/g, '_');
-
-							// initial resize
-							$self.resizeUnloadImg();
-
-							// events for later resize
-
-							// resize on sizeChange event
-							$window.on( 'sizeChange.lazyloadUnload.' + eventId, function() {
-								if ( ! self.loaded ) {
-									$self.resizeUnloadImg();
-								}
-								else {
-									// destroy resize event after loading
-									$window.unbind( 'sizeChange.lazyloadUnload.' + eventId + ' resize.lazyloadUnload.' + eventId );
-								}
-							} );
-
-							// media xs only: resize on window resize event
-							$window.on( 'resize.lazyloadUnload.' + eventId, function() {
-								if ( !! window.mediaSize && window.mediaSize == 'xs' ) {
-									if ( ! self.loaded ) {
-										$self.resizeUnloadImg();
-									}
-									else {
-										// destroy resize event after loading
-										$window.unbind( 'sizeChange.lazyloadUnload.' + eventId + ' resize.lazyloadUnload.' + eventId );
-									}
-								}
-							} );
-
-						}
-						 
-					} )
-					.attr( 'src', settings.placeholder );
-				
-            }
-			
-			// if width and height given, do initial resize, handle resize events
-
-            /* When appear is triggered load original image. */
-            $self.one("appear", function() {
-                if (!this.loaded) {
-                    if (settings.appear) {
-                        var elements_left = elements.length;
-                        settings.appear.call(self, elements_left, settings);
-                    }
-                    $("<img>")
-                        .bind("load", function() {
-
-                            var original = $self.attr("data-" + settings.data_attribute);
-                            if ($self.is("img")) {
-                                $self.hide();
-                                $self.attr("src", original);
-                                $self.css( { width: '', height: '' } ); // custom adaption
-                                $self[settings.effect](settings.effect_speed);
-                            } else {
-								var backgroundImage = $self.css("background-image");
-                                $self.css( { backgroundImage: "url('" + original + "'), " + backgroundImage } ); // custom adaption: load new image and put it before old one without removing old one
-                            }
-
-                            self.loaded = true;
-									 
-                            /* Remove image from array so it is not looped next time. */
-                            var temp = $.grep(elements, function(element) {
-                                return !element.loaded;
-                            });
-                            elements = $(temp);
-
-                            if (settings.load) {
-                                var elements_left = elements.length;
-                                settings.load.call(self, elements_left, settings);
-                            }
-						
-                        })
-                        .attr("src", $self.attr("data-" + settings.data_attribute));
-					$self.trigger("loaded");
-					
-                }
-            });
-
-            /* When wanted event is triggered load original image */
-            /* by triggering appear.                              */
-            if (0 !== settings.event.indexOf("scroll")) {
-                $self.bind(settings.event, function() {
-                    if (!self.loaded) {
-                        $self.trigger("appear");
-                    }
-                });
-            }
-        });
-
-        /* Force initial check if images should appear. */
-        $document.ready(function() {
-            update();
-        });
-		//  custom adaption: update after fonts loaded
-        $window.on( 'load resize', function() {
-            update();
-        } );
-
-        return this;
-    };
-
-    /* Convenience methods in jQuery namespace.           */
-    /* Use as  $.belowthefold(element, {threshold : 100, container : window}) */
-
-    $.belowthefold = function(element, settings) {
-        var fold;
-
-        if (settings.container === undefined || settings.container === window) {
-            fold = (window.innerHeight ? window.innerHeight : $window.height()) + $window.scrollTop();
-        } else {
-            fold = $(settings.container).offset().top + $(settings.container).height();
-        }
-
-        return fold <= $(element).offset().top - settings.threshold;
-    };
-
-    $.rightoffold = function(element, settings) {
-        var fold;
-
-        if (settings.container === undefined || settings.container === window) {
-            fold = $window.width() + $window.scrollLeft();
-        } else {
-            fold = $(settings.container).offset().left + $(settings.container).width();
-        }
-
-        return fold <= $(element).offset().left - settings.threshold;
-    };
-
-    $.abovethetop = function(element, settings) {
-        var fold;
-
-        if (settings.container === undefined || settings.container === window) {
-            fold = $window.scrollTop();
-        } else {
-            fold = $(settings.container).offset().top;
-        }
-
-        return fold >= $(element).offset().top + settings.threshold  + $(element).height();
-    };
-
-    $.leftofbegin = function(element, settings) {
-        var fold;
-
-        if (settings.container === undefined || settings.container === window) {
-            fold = $window.scrollLeft();
-        } else {
-            fold = $(settings.container).offset().left;
-        }
-
-        return fold >= $(element).offset().left + settings.threshold + $(element).width();
-    };
-
-    $.inviewport = function(element, settings) {
-         return !$.rightoffold(element, settings) && !$.leftofbegin(element, settings) &&
-                !$.belowthefold(element, settings) && !$.abovethetop(element, settings);
-    };
-
-    /* Custom selectors for your convenience.   */
-    /* Use as $("img:below-the-fold").something() or */
-    /* $("img").filter(":below-the-fold").something() which is faster */
-
-    $.extend($.expr[":"], {
-        "below-the-fold" : function(a) { return $.belowthefold(a, {threshold : 0}); },
-        "above-the-top"  : function(a) { return !$.belowthefold(a, {threshold : 0}); },
-        "right-of-screen": function(a) { return $.rightoffold(a, {threshold : 0}); },
-        "left-of-screen" : function(a) { return !$.rightoffold(a, {threshold : 0}); },
-        "in-viewport"    : function(a) { return $.inviewport(a, {threshold : 0}); },
-        /* Maintain BC for couple of versions. */
-        "above-the-fold" : function(a) { return !$.belowthefold(a, {threshold : 0}); },
-        "right-of-fold"  : function(a) { return $.rightoffold(a, {threshold : 0}); },
-        "left-of-fold"   : function(a) { return !$.rightoffold(a, {threshold : 0}); }
-    });
-
-})(jQuery, window, document);
-
-/*
 
 <div data-fn="remote-event" data-fn-target="#id-1" data-fn-options="{ triggerEvent: 'click',  remoteEvent: 'click' }"></div>
 
@@ -3558,268 +3226,6 @@ EXAMPLE 2:
     };
 
 } )( jQuery, MY_UTILS );
-// simple slide toggle
-
-// TODO: what about aria attributes?
-
-( function( $, Utils ) {
-
-    $.fn.simpleSlideToggle = function( options ) {
-
-        var defaults = {
-            effectIn: 'slideDown',
-            effectOut: 'slideUp',
-            effectDuration: 400,
-            openedClass: Utils.classes.open,
-            animatingClass: Utils.classes.animating,
-            animatingInClass: Utils.classes.animatingIn,
-            animatingOutClass: Utils.classes.animatingOut
-        };
-
-        options = $.extend( {}, defaults, options );
-
-        var $elems = $( this );
-
-        $elems.each( function() {
-
-            var $elem = $( this );
-            var $elemTrigger = $elem.find( options.triggerSelector );
-            var $elemBody = $elem.find( options.bodySelector );
-
-            // initial set closed
-            if ( ! $elem.is( '.' + options.openedClass ) ) {
-                $elemBody.css( { display: 'none' } );
-            }
-
-            // bind click event
-            $elemTrigger.on( 'click', function() {
-
-                if ( ! $elem.is( '.' + options.openedClass ) ) {
-                    console.log( 'open' );
-                    $elem
-                        .addClass( options.animatingClass )
-                        .addClass( options.animatingInClass );
-                    $elemBody.stop()[ options.effectIn ]( options.effectDuration, function() {
-                        $elem
-                            .addClass( options.openedClass )
-                            .removeClass( options.animatingClass )
-                            .removeClass( options.animatingInClass );
-                    } );
-                }
-                else {
-                    console.log( 'close' );
-                    $elem
-                        .addClass( options.animatingClass )
-                        .addClass( options.animatingOutClass )
-                        .removeClass( options.openedClass );
-                    $elemBody.stop()[ options.effectOut ]( options.effectDuration, function() {
-                        $elem
-                            .removeClass( options.animatingClass )
-                            .removeClass( options.animatingOutClass );
-                    } );
-                }
-
-            } );
-
-        } );
-
-    };
-
-} )( jQuery, MY_UTILS );
-( function( $, Utils ) {
-
-    // sticky container
-
-    $.fn.stickyContainer = function( options ) {
-
-        // TODO: check if below / above is static / fixed (static below causes collission sticky and above)
-
-        var $elems = $( this );
-
-        var defaults = {
-            keepBelowSelector: '',
-            keepAboveSelector: '',
-            topDistance: 0,
-            bottomDistance: 0,
-            fixedClass: 'fixed',
-            activeHashScrollToDistance: 30
-        };
-
-        options = $.extend( {}, defaults, options );
-
-        var $above = ( Utils.$targetElems.filter( options.keepBelowSelector ).lenght > 0 ) ? Utils.$targetElems.filter( options.keepBelowSelector ) : $( options.keepBelowSelector );
-        var $below = ( Utils.$targetElems.filter( options.keepAboveSelector ).lenght > 0 ) ? Utils.$targetElems.filter( options.keepAboveSelector ) : $( options.keepAboveSelector );
-
-        var belowElementOffsetBottom;
-        var aboveElementOffsetTop;
-        var windowHeight;
-
-        var refreshValuesWhileScrolling = false;
-
-        // functions
-        function _getValues() {
-            windowHeight = Utils.$window.height();
-            belowElementOffsetBottom = $above.offset().top + $above.outerHeight() + parseInt( $above.css( 'margin-bottom' ) ) || 0;
-            aboveElementOffsetTop = $below.offset().top - parseInt( $below.css( 'margin-top' ) ) || windowHeight;
-            if ( $above.css( 'position' ) == 'fixed' || $below.css( 'position' ) == 'fixed' ) {
-                refreshValuesWhileScrolling = true;
-            }
-            else {
-                refreshValuesWhileScrolling = false;
-            }
-        }
-        $.fn._copyWidthFromParent = function() {
-            $this = $( this );
-            $thisParent = $this.parent();
-            if ( $this.is( ':visible' ) ) {
-                var paddingLeft = parseInt( $thisParent.css( 'padding-left' ) );
-                var width = $thisParent.innerWidth() - paddingLeft - parseInt( $thisParent.css( 'padding-right' ) );
-                var left = $thisParent.offset().left + paddingLeft;
-                // to make safari happy set left too
-                $this.css( { 
-                    width: width + 'px',
-                    left: left + 'px'
-                } );
-            }
-
-        }
-
-        if ( $elems.length > 0 ) {
-
-            _getValues();
-
-            $elems.each( function() {
-
-                var $elem = $( this );
-                var $elemInner = $elem.children().first();
-
-                // set width
-                $elem._copyWidthFromParent();
-
-                // prepare positioning
-                function _positionStickyContainer() {
-
-                    // resize only if visible
-                    if ( $elem.is( ':visible' ) ) {
-
-                        // if $below or $above is fixes values will change while scrolling
-                        if ( refreshValuesWhileScrolling ) {
-                            _getValues();
-                        }
-
-                        var elemWrapperOffsetTop = $elem.parent().offset().top; // watch parent since fixed elem will never overlap $below
-                        var elemInnerHeight = $elemInner.outerHeight();
-                        var scrollTop = Utils.$document.scrollTop();
-
-                        if (
-                                elemWrapperOffsetTop > scrollTop // below window top
-                                && elemWrapperOffsetTop > belowElementOffsetBottom // below $below
-                                && elemWrapperOffsetTop + elemInnerHeight < windowHeight // above window bottom
-                                && elemWrapperOffsetTop + elemInnerHeight < aboveElementOffsetTop // above $above
-                            ) {
-
-                            // static
-                            $elem
-                                .removeClass( options.fixedClass )
-                                .css( { top: 'auto', bottom: 'auto' } );
-
-
-                        }
-                        else {
-
-                            // fixed
-                            var top = ( belowElementOffsetBottom - scrollTop + options.topDistance > 0 ) ? belowElementOffsetBottom - scrollTop + options.topDistance : 0;
-                            var bottom = ( ( aboveElementOffsetTop - scrollTop ) + options.bottomDistance > windowHeight ) ? 0 : windowHeight - ( aboveElementOffsetTop - scrollTop ) + options.bottomDistance;
-
-                            $elem
-                                .addClass( options.fixedClass )
-                                .css( { top: top, bottom: bottom } );
-
-                        }
-
-                        // reset after fonts load, resize
-                        Utils.$window.on( 'load resize', function() {
-
-                            _positionStickyContainer();
-
-                        } );
-
-                    }
-                    
-                }
-
-                // do positioning
-                _positionStickyContainer();
-
-                // bind to scroll
-                Utils.$window.on( 'scroll', function() {
-
-                    _positionStickyContainer();
-
-                } );
-
-                // update values on resize, orientationchange
-                Utils.$window.on( 'resize orientationchange', function() {
-                    _getValues();
-                    $elem._copyWidthFromParent();
-
-                    _positionStickyContainer();
-                } );
-
-                // check for special options
-
-                var attrOptions;
-
-                // scroll active hash visible
-                if ( ( attrOptions = $elem.getOptionsFromAttr() ) ) {
-                    var hash = window.location.hash;
-                    var $currentHashElem = $elemInner.find( 'a[href="' + hash + '"]' );
-
-                    if ( !! hash && hash != '#' && $currentHashElem.length > 0 ) {
-                        // check if $currentHashElem is in visible area of sticky container
-
-                        var currentHashElemOffsetTop = $currentHashElem.offset().top;
-                        var currentHashElemHeight = parseInt( $currentHashElem.outerHeight() );
-                        var elemOffsetTop = $elem.offset().top;
-                        var elemHeight = $elem.height();
-
-                        if ( currentHashElemOffsetTop > elemOffsetTop + elemHeight ) {
-                            // $currentHashElem not visible
-
-                            var elemScrollTop = currentHashElemOffsetTop - elemOffsetTop - elemHeight + currentHashElemHeight + options.activeHashScrollToDistance;
-                            $elem.scrollTop( elemScrollTop );
-
-                        }
-
-                    }
-                }
-
-            } );
-
-        }
-
-    }
-
-    // /sticky container
-
-} )( jQuery, MY_UTILS );
-( function( $ ) {
-    $.fn.submitOnChange = function() {
-
-        var $elems = $( this );
-
-        $elems.each( function() {
-
-            var $elem = $( this );
-            var $form = $elem.closest( 'form' );
-
-            $elem.on( 'change', function() {
-                $form.submit();
-            } );
-
-        } );
-    }
-} )( jQuery );
 ( function( $, Utils ) {
 
     // to top
@@ -3906,55 +3312,6 @@ EXAMPLE 2:
 
     // remote event (e.g. main navigation backdrop)
     Utils.$functionElems.filter( '[data-fn="remote-event"]' ).remoteEvent();
-
-    // submit
-    Utils.$functionElems.filter( '[data-fn="submit-on-change"]' ).submitOnChange();
-
-    // simple slide toggle (e.g. accordions)
-    $( '[data-fn="accordion"]' ).simpleSlideToggle( {
-        triggerSelector: '[data-fn="accordion-trigger"]',
-        bodySelector: '[data-fn="accordion-content"]'
-    } );
-
-    // sticky container (e.g. scrollspy nav)
-    Utils.$functionElems.filter( '[data-fn="sticky-container"]' ).stickyContainer( {
-        keepBelowSelector: '[data-tg="sticky-container-below"]',
-        keepAboveSelector: '[data-tg="sticky-container-above"]',
-        topDistance: 1,
-        bottomDistance: 16
-    } );
-
-    // init lazyload
-    $.fn.initLazyload = function( options ) {
-
-        var defaults = {
-            effect: 'fadeIn',
-            event: ( typeof Modernizr !== "undefined" && Modernizr.touchevents ) ? 'scroll touchmove' : 'scroll',
-            data_attribute: 'src'
-        };
-
-        options = $.extend( {}, defaults, options );
-
-        var $elems = $( this );
-
-        $elems.each( function( i, image ) {
-
-            var $image = $( image );
-
-            if ( !! $image.attr( 'data-fn-effect' ) ) {
-                options.effect = $image.attr( 'data-fn-effect' );
-            }
-
-            $image.lazyload( options );
-            
-        } );
-
-    }
-
-    // init
-    Utils.$functionElems.filter( '[data-fn="lazyload"]' ).initLazyload();
-
-    // /init lazyload
 
     // animated anchors
     $('a[href^="#"]:not([href="#"])').animatedAnchors( {

@@ -38,8 +38,8 @@
 		]
 	};
 
-	// TEST – TODO: remove
-	
+	// TEST (test configuration joint and single election) – TODO: remove
+/*	
 	var currentElectionPreset = {
 		"Vorstand": [
 			{
@@ -198,9 +198,9 @@
 			}
 		]
 	};
+*/
 
-/*
-	// TEST – TODO: remove
+	// TEST (test configuration joint election) – TODO: remove
 	var currentElectionPreset = {
 		"Vorstand": [
 			{
@@ -422,8 +422,9 @@
 			}
 		]
 	};
-*/
+
 	// TEST – TODO: remove
+/*
 	var testElectionResult = {
 		"Vorstand": [
 			{
@@ -769,6 +770,7 @@
 			}
 		]
 	};
+*/
 
 	// TODO: load existing config instead of this?
 	var currentElectionConfig = ( !! currentElectionPreset ) ? $.extend( {}, electionConfig, currentElectionPreset ) : $.extend( {}, electionConfig );
@@ -1101,7 +1103,7 @@
 	- "explanation" habe ich erstmal weggelassen, da die Ergebnisse von der Oberlfäche ohnehin angezeigt werden, und ich gerne Daten und Oberflächenstruktur voneinander trennen würde
 
 
-	(FALL 1: gemeinsame Wahl)
+	(FALL 1: gemeinsame Wahl -> "joint" == true bzw. typeof "current" === 'string' )
 
 	input = {
 		"structure": [
@@ -1203,7 +1205,7 @@
 		]
 	}
 
-	(FALL 2: einzelne Wahl)
+	(FALL 2: einzelne Wahl -> "joint" == true bzw. typeof "current" === 'object')
 
 	input = {
 		"structure": [
@@ -1453,22 +1455,7 @@
 
 						// fill electionCalculationInput
 						electionCalculationInput.current = currentElectionConfig[ key ][ i ].name;
-
-						/*if ( i === 0 ) {
-							// reset previous at fist election within election group
-							electionCalculationInput.previous = [];
-						}
-						else {
-							// all following elections if results copy into previous
-							var previousI = i - 1;
-							if ( typeof currentElectionConfig[ key ][ previousI ].results !== 'undefined' && currentElectionConfig[ key ][ previousI ].results.length > 0 ) {
-								for ( var k = 0; k < currentElectionConfig[ key ][ previousI ].results.length; k++ ) {
-									electionCalculationInput.previous.push( currentElectionConfig[ key ][ previousI ].results[ k ] );
-								}
-							}
-						}*/
 						_setPrevious();
-
 						electionCalculationInput.candidates = currentElectionConfig[ key ][ i ].candidates;
 
 						// call election tool
@@ -1492,21 +1479,6 @@
 					// election single, multiple candidates lists
 
 					// fill electionCalculationInput
-
-					/*if ( i === 0 ) {
-						// reset previous at fist election within election group
-						electionCalculationInput.previous = [];
-					}
-					else {
-						// all following elections if results copy into previous
-						var previousI = i - 1;
-						if ( typeof currentElectionConfig[ key ][ previousI ].results !== 'undefined' && currentElectionConfig[ key ][ previousI ].results.length > 0 ) {
-							for ( var k = 0; k < currentElectionConfig[ key ][ previousI ].results.length; k++ ) {
-								electionCalculationInput.previous.push( currentElectionConfig[ key ][ previousI ].results[ k ] );
-							}
-						}
-					}*/
-					
 					_setPrevious();
 
 					for ( var j = 0; j < currentElectionConfig[ key ][ i ].candidates.length; j++ ) {
