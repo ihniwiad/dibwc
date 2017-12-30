@@ -1,0 +1,6 @@
+// gradients
+
+
+.dib-gradient-x {
+	@include multi-color-gradient-x($dib-gradient-colors);
+}

@@ -1,0 +1,84 @@
+// dib variables
+
+
+// COLORS
+
+$dib-color-1: 	#274f9e !default; // blue
+$dib-color-2: 	#eb5c4a !default; // red
+
+$dib-color-inverse:	#ffffff !default;
+
+
+// GRADIENT COLORS
+  
+$dib-gradient-colors: (
+	#263d82 0%, 
+	#293e82 22%, 
+	#363f80 33%, 
+	#51437d 47%, 
+	#784875 63%, 
+	#9e4e6b 77%, 
+	#c3555f 89%, 
+	#e45c4f 100%
+) !default;
+
+
+// OVERRIDE
+
+
+// colors
+
+$brand-primary: 	$dib-color-1 !default;
+$primary: 			$dib-color-1 !default;
+$secondary: 		$dib-color-2 !default;
+
+
+// nav transparency
+$transparency-nav-bg-light:             0.94 !default;
+$transparency-nav-dropdown-bg-light:    $transparency-nav-bg-light !default;
+$transparency-nav-bg-light-hover:       0.1 !default;
+$transparency-nav-a-border-mobile:      0.075 !default;
+
+// nav colors
+
+// nav bg
+$color-mystyle-nav-bg:                               rgba($dib-color-inverse, $transparency-nav-bg-light) !default; // header
+$color-mystyle-nav-bg-mobile:                        $dib-color-inverse; // mobile nav background
+$color-mystyle-nav-dropdown-bg:                      $dib-color-inverse !default; // dropdown background
+
+// nav bg a hover
+$color-mystyle-nav-bg-hover-desktop-level-1:         $dib-color-inverse !default; // hover desktop level 1
+$color-mystyle-nav-bg-hover-desktop-level-2:         rgba($dib-color-1, $transparency-nav-bg-light-hover) !default; // hover desktop level 2..n
+$color-mystyle-nav-bg-hover-mobile:                  rgba($dib-color-1, $transparency-nav-bg-light-hover) !default; // hover mobile level 1..n
+
+// nav dropdown borders
+$color-mystyle-nav-dropdown-border-top-color:        transparent !default;
+$color-mystyle-nav-dropdown-border-bottom-color:     transparent !default;
+
+// nav text
+$color-mystyle-nav-text:                             $dib-color-inverse !default;
+$color-mystyle-nav-text-active:                      $color-mystyle-nav-text !default;
+$color-mystyle-nav-text-hover:                       $dib-color-1 !default;
+
+// nav dropdown text
+$color-mystyle-nav-dropdown-text:                    $dib-color-1 !default;
+$color-mystyle-nav-dropdown-text-active:             $dib-color-1 !default;
+$color-mystyle-nav-dropdown-text-hover:              $dib-color-1 !default;
+
+// nav bigmenu text
+$color-mystyle-nav-big-level-2-text:                 $dib-color-1 !default;
+$color-mystyle-nav-big-level-2-text-active:          $dib-color-1 !default;
+$color-mystyle-nav-big-level-2-text-hover:           $dib-color-1 !default;
+
+// nav mobile text
+$color-mystyle-nav-mobile-text:                      $dib-color-1 !default;
+$color-mystyle-nav-mobile-text-active:               $dib-color-1 !default;
+$color-mystyle-nav-mobile-text-hover:                $dib-color-1;
+
+// nav icon
+$color-mystyle-nav-icon:                             inherit !default;
+$color-mystyle-nav-icon-active:                      inherit !default;
+$color-mystyle-nav-icon-hover:                       inherit !default;
+
+
+

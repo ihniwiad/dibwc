@@ -1,0 +1,14 @@
+// mixins gradient
+
+
+@mixin multi-color-gradient-x($colors-percents) {
+
+	$gradient-str: ();
+
+	@each $color-percent in $colors-percents {
+		$gradient-str: append($gradient-str, $color-percent, comma);
+	}
+
+	background-image: linear-gradient(to right, $gradient-str);
+	background-repeat: repeat-y;
+}
