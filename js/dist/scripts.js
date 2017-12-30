@@ -478,7 +478,7 @@ var MY_UTILS = (function( $ ) {
 	};
 
 	// TEST (test configuration joint and single election) – TODO: remove
-/*	
+	
 	var currentElectionPreset = {
 		"Vorstand": [
 			{
@@ -637,8 +637,8 @@ var MY_UTILS = (function( $ ) {
 			}
 		]
 	};
-*/
 
+/*
 	// TEST (test configuration joint election) – TODO: remove
 	var currentElectionPreset = {
 		"Vorstand": [
@@ -861,7 +861,7 @@ var MY_UTILS = (function( $ ) {
 			}
 		]
 	};
-
+*/
 	// TEST – TODO: remove
 /*
 	var testElectionResult = {
@@ -1800,13 +1800,15 @@ var MY_UTILS = (function( $ ) {
 					"diverse": true
 				}
 			}
-		] : {
-			"candidate": {
-				"name": "Kira Kirsch-Banane",
-				"female": true,
-				"diverse": false
+		] : [
+			{
+				"candidate": {
+					"name": "Lina Limone",
+					"female": true,
+					"diverse": false
+				}
 			}
-		};
+		];
 		// /TEST
 
 
@@ -1954,8 +1956,8 @@ var MY_UTILS = (function( $ ) {
 							var electionCalculationOutput = _calculateElectionResult( electionCalculationInput );
 							if ( electionCalculationOutput ) {
 								// copy results into currentElectionConfig
-								currentElectionConfig[ key ][ i ].results.push( electionCalculationOutput );
-								electionCalculationInput.previous.push( electionCalculationOutput );
+								currentElectionConfig[ key ][ i ].results.push( electionCalculationOutput[ 0 ] );
+								electionCalculationInput.previous.push( electionCalculationOutput[ 0 ] );
 							}
 
 						}
@@ -1976,6 +1978,8 @@ var MY_UTILS = (function( $ ) {
 
 	// get config step 0
 	$.fn._getElectionCurrentConfig_0 = function() {
+
+		// TODO: what if changing count while preconfigured single elections lists
 
 		var step = 0;
 
