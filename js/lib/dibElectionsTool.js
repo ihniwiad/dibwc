@@ -1213,7 +1213,7 @@
 		]
 	}
 
-	(FALL 2: einzelne Wahl -> "joint" == true bzw. typeof "current" === 'object')
+	(FALL 2: einzelne Wahl -> "joint" != true bzw. typeof "current" === 'object')
 
 	input = {
 		"structure": [
@@ -1229,7 +1229,7 @@
 			{
 				"name": "weitere Mitglieder",
 				"count": 2,
-				"joint": true,
+				"joint": false,
 				"overall": true
 			}
 		],
