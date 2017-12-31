@@ -38,76 +38,277 @@
 		]
 	};
 
-	// TEST (test configuration joint and single election) – TODO: remove
+	// TEST – TODO: remove
+	var currentElectionPreset;
+
+	var url_string = "http://www.example.com/t.html?a=1&b=3&c=m2-m3-m4-m5"; //window.location.href
+	var url = new URL( document.location.href );
+	var preset = url.searchParams.get( 'preset' );
 	
-	var currentElectionPreset = {
-		"Vorstand": [
-			{
-				"name": "Vorsitzende",
-				"count": 2,
-				"joint": true,
-				"candidates": [
-					{
-						"candidate": {
-							"name": "Lina Limone",
-							"female": true,
-							"diverse": false
+	if ( preset == 2 ) {
+		// TEST (test configuration joint and single election) – TODO: remove
+		currentElectionPreset = {
+			"Vorstand": [
+				{
+					"name": "Vorsitzende",
+					"count": 2,
+					"joint": true,
+					"candidates": [
+						{
+							"candidate": {
+								"name": "Lina Limone",
+								"female": true,
+								"diverse": false
+							},
+							"yes": 18,
+							"no": 2
 						},
-						"yes": 18,
-						"no": 2
-					},
-					{
-						"candidate": {
-							"name": "Manfred Mango",
-							"female": false,
-							"diverse": false
+						{
+							"candidate": {
+								"name": "Manfred Mango",
+								"female": false,
+								"diverse": false
+							},
+							"yes": 12,
+							"no": 1
 						},
-						"yes": 12,
-						"no": 1
-					},
-					{
-						"candidate": {
-							"name": "Olivia Orange",
-							"female": true,
-							"diverse": true
+						{
+							"candidate": {
+								"name": "Olivia Orange",
+								"female": true,
+								"diverse": true
+							},
+							"yes": 12,
+							"no": 0
+						}
+					]
+				},
+				{
+					"name": "Schatzmeister*in",
+					"count": 1,
+					"candidates": [
+						{
+							"candidate": {
+								"name": "Anna Ananas",
+								"female": true,
+								"diverse": true
+							},
+							"yes": 12,
+							"no": 4
 						},
-						"yes": 12,
-						"no": 0
-					}
-				]
-			},
-			{
-				"name": "Schatzmeister*in",
-				"count": 1,
-				"candidates": [
-					{
-						"candidate": {
-							"name": "Anna Ananas",
-							"female": true,
-							"diverse": true
+						{
+							"candidate": {
+								"name": "Cora Cocos",
+								"female": true,
+								"diverse": false
+							},
+							"yes": 7,
+							"no": 1
+						}
+					]
+				},
+				{
+					"name": "weitere Mitglieder",
+					"count": 3,
+					"countVariable": true,
+					"overall": true,
+					"joint": false,
+					"candidates": [
+						[
+							{
+								"candidate": {
+									"name": "Maria Maracuja",
+									"female": true,
+									"diverse": true
+								},
+								"yes": 12,
+								"no": 0
+							},
+							{
+								"candidate": {
+									"name": "Bernard Banane",
+									"female": false,
+									"diverse": false
+								},
+								"yes": 12,
+								"no": 1
+							}
+						],
+						[
+							{
+								"candidate": {
+									"name": "Kira Kirsch-Banane",
+									"female": true,
+									"diverse": false
+								},
+								"yes": 18,
+								"no": 2
+							},
+							{
+								"candidate": {
+									"name": "Alfred Apfel",
+									"female": false,
+									"diverse": true
+								},
+								"yes": 11,
+								"no": 3
+							},
+							{
+								"candidate": {
+									"name": "Anna Ananas",
+									"female": true,
+									"diverse": true
+								},
+								"yes": 12,
+								"no": 4
+							},
+							{
+								"candidate": {
+									"name": "Cora Cocos",
+									"female": true,
+									"diverse": false
+								},
+								"yes": 7,
+								"no": 1
+							}
+						],
+						[
+							{
+								"candidate": {
+									"name": "Kilian Kiwi",
+									"female": false,
+									"diverse": true
+								},
+								"yes": 7,
+								"no": 0
+							},
+							{
+								"candidate": {
+									"name": "Mandy Mandarine",
+									"female": true,
+									"diverse": true
+								},
+								"yes": 8,
+								"no": 2
+							},
+							{
+								"candidate": {
+									"name": "Melly Melone",
+									"female": true,
+									"diverse": false
+								},
+								"yes": 15,
+								"no": 3
+							}
+						]
+					]
+				}
+			]
+		};
+	}
+	else if ( preset == 1 ) {
+		// TEST (test configuration joint election) – TODO: remove
+		currentElectionPreset = {
+			"Vorstand": [
+				{
+					"name": "Vorsitzende",
+					"count": 2,
+					"joint": true,
+					"candidates": [
+						{
+							"candidate": {
+								"name": "Lina Limone",
+								"female": true,
+								"diverse": false
+							},
+							"yes": 18,
+							"no": 2
 						},
-						"yes": 12,
-						"no": 4
-					},
-					{
-						"candidate": {
-							"name": "Cora Cocos",
-							"female": true,
-							"diverse": false
+						{
+							"candidate": {
+								"name": "Manfred Mango",
+								"female": false,
+								"diverse": false
+							},
+							"yes": 12,
+							"no": 1
 						},
-						"yes": 7,
-						"no": 1
-					}
-				]
-			},
-			{
-				"name": "weitere Mitglieder",
-				"count": 3,
-				"countVariable": true,
-				"overall": true,
-				"joint": false,
-				"candidates": [
-					[
+						{
+							"candidate": {
+								"name": "Olivia Orange",
+								"female": true,
+								"diverse": true
+							},
+							"yes": 12,
+							"no": 0
+						}
+					],
+					"results": [
+						{
+							"candidate": {
+								"name": "Lina Limone",
+								"female": true,
+								"diverse": false
+							}
+						},
+						{
+							"candidate": {
+								"name": "Manfred Mango",
+								"female": false,
+								"diverse": false
+							}
+						}
+					]
+				},
+				{
+					"name": "Schatzmeister*in",
+					"count": 1,
+					"candidates": [
+						{
+							"candidate": {
+								"name": "Kilian Kiwi",
+								"female": false,
+								"diverse": true
+							},
+							"yes": 7,
+							"no": 0
+						},
+						{
+							"candidate": {
+								"name": "Mandy Mandarine",
+								"female": true,
+								"diverse": true
+							},
+							"yes": 8,
+							"no": 2
+						},
+						{
+							"candidate": {
+								"name": "Melly Melone",
+								"female": true,
+								"diverse": false
+							},
+							"yes": 15,
+							"no": 3
+						}
+					],
+					"results": [
+						{
+							"candidate": {
+								"name": "Melly Melone",
+								"female": true,
+								"diverse": false
+							}
+						}
+					]
+				},
+				{
+					"name": "weitere Mitglieder",
+					"count": 3,
+					"countVariable": true,
+					"overall": true,
+					"joint": true,
+					"candidates": [
 						{
 							"candidate": {
 								"name": "Maria Maracuja",
@@ -125,9 +326,7 @@
 							},
 							"yes": 12,
 							"no": 1
-						}
-					],
-					[
+						},
 						{
 							"candidate": {
 								"name": "Kira Kirsch-Banane",
@@ -164,265 +363,74 @@
 							"yes": 7,
 							"no": 1
 						}
-					],
-					[
+					]
+				}
+			],
+			"Schiedsgericht": [
+				{
+					"name": "Richter*innen",
+					"count": 3,
+					"joint": true,
+					"candidates": [
 						{
 							"candidate": {
-								"name": "Kilian Kiwi",
+								"name": "Pablo Papaya",
 								"female": false,
 								"diverse": true
 							},
-							"yes": 7,
+							"yes": 8,
 							"no": 0
 						},
 						{
 							"candidate": {
-								"name": "Mandy Mandarine",
-								"female": true,
-								"diverse": true
+								"name": "Lydia Litschi",
+								"female": false,
+								"diverse": false
 							},
-							"yes": 8,
-							"no": 2
+							"yes": 5,
+							"no": 1
 						},
 						{
 							"candidate": {
-								"name": "Melly Melone",
+								"name": "Eduard Erdbeere",
+								"female": true,
+								"diverse": true
+							},
+							"yes": 7,
+							"no": 0
+						}
+					]
+				},
+				{
+					"name": "Ersatzrichter*innen",
+					"count": 2,
+					"joint": true,
+					"overall": true,
+					"candidates": [
+						{
+							"candidate": {
+								"name": "Holly Holunder",
 								"female": true,
 								"diverse": false
 							},
 							"yes": 15,
-							"no": 3
+							"no": 1
+						},
+						{
+							"candidate": {
+								"name": "Hila Himbeere",
+								"female": true,
+								"diverse": true
+							},
+							"yes": 9,
+							"no": 0
 						}
 					]
-				]
-			}
-		]
-	};
+				}
+			]
+		};
+	}
 
-/*
-	// TEST (test configuration joint election) – TODO: remove
-	var currentElectionPreset = {
-		"Vorstand": [
-			{
-				"name": "Vorsitzende",
-				"count": 2,
-				"joint": true,
-				"candidates": [
-					{
-						"candidate": {
-							"name": "Lina Limone",
-							"female": true,
-							"diverse": false
-						},
-						"yes": 18,
-						"no": 2
-					},
-					{
-						"candidate": {
-							"name": "Manfred Mango",
-							"female": false,
-							"diverse": false
-						},
-						"yes": 12,
-						"no": 1
-					},
-					{
-						"candidate": {
-							"name": "Olivia Orange",
-							"female": true,
-							"diverse": true
-						},
-						"yes": 12,
-						"no": 0
-					}
-				],
-				"results": [
-					{
-						"candidate": {
-							"name": "Lina Limone",
-							"female": true,
-							"diverse": false
-						}
-					},
-					{
-						"candidate": {
-							"name": "Manfred Mango",
-							"female": false,
-							"diverse": false
-						}
-					}
-				]
-			},
-			{
-				"name": "Schatzmeister*in",
-				"count": 1,
-				"candidates": [
-					{
-						"candidate": {
-							"name": "Kilian Kiwi",
-							"female": false,
-							"diverse": true
-						},
-						"yes": 7,
-						"no": 0
-					},
-					{
-						"candidate": {
-							"name": "Mandy Mandarine",
-							"female": true,
-							"diverse": true
-						},
-						"yes": 8,
-						"no": 2
-					},
-					{
-						"candidate": {
-							"name": "Melly Melone",
-							"female": true,
-							"diverse": false
-						},
-						"yes": 15,
-						"no": 3
-					}
-				],
-				"results": [
-					{
-						"candidate": {
-							"name": "Melly Melone",
-							"female": true,
-							"diverse": false
-						}
-					}
-				]
-			},
-			{
-				"name": "weitere Mitglieder",
-				"count": 3,
-				"countVariable": true,
-				"overall": true,
-				"joint": true,
-				"candidates": [
-					{
-						"candidate": {
-							"name": "Maria Maracuja",
-							"female": true,
-							"diverse": true
-						},
-						"yes": 12,
-						"no": 0
-					},
-					{
-						"candidate": {
-							"name": "Bernard Banane",
-							"female": false,
-							"diverse": false
-						},
-						"yes": 12,
-						"no": 1
-					},
-					{
-						"candidate": {
-							"name": "Kira Kirsch-Banane",
-							"female": true,
-							"diverse": false
-						},
-						"yes": 18,
-						"no": 2
-					},
-					{
-						"candidate": {
-							"name": "Alfred Apfel",
-							"female": false,
-							"diverse": true
-						},
-						"yes": 11,
-						"no": 3
-					},
-					{
-						"candidate": {
-							"name": "Anna Ananas",
-							"female": true,
-							"diverse": true
-						},
-						"yes": 12,
-						"no": 4
-					},
-					{
-						"candidate": {
-							"name": "Cora Cocos",
-							"female": true,
-							"diverse": false
-						},
-						"yes": 7,
-						"no": 1
-					}
-				]
-			}
-		],
-		"Schiedsgericht": [
-			{
-				"name": "Richter*innen",
-				"count": 3,
-				"joint": true,
-				"candidates": [
-					{
-						"candidate": {
-							"name": "Pablo Papaya",
-							"female": false,
-							"diverse": true
-						},
-						"yes": 8,
-						"no": 0
-					},
-					{
-						"candidate": {
-							"name": "Lydia Litschi",
-							"female": false,
-							"diverse": false
-						},
-						"yes": 5,
-						"no": 1
-					},
-					{
-						"candidate": {
-							"name": "Eduard Erdbeere",
-							"female": true,
-							"diverse": true
-						},
-						"yes": 7,
-						"no": 0
-					}
-				]
-			},
-			{
-				"name": "Ersatzrichter*innen",
-				"count": 2,
-				"joint": true,
-				"overall": true,
-				"candidates": [
-					{
-						"candidate": {
-							"name": "Holly Holunder",
-							"female": true,
-							"diverse": false
-						},
-						"yes": 15,
-						"no": 1
-					},
-					{
-						"candidate": {
-							"name": "Hila Himbeere",
-							"female": true,
-							"diverse": true
-						},
-						"yes": 9,
-						"no": 0
-					}
-				]
-			}
-		]
-	};
-*/
 	// TEST – TODO: remove
 /*
 	var testElectionResult = {
@@ -773,7 +781,7 @@
 */
 
 	// TODO: load existing config instead of this?
-	var currentElectionConfig = ( !! currentElectionPreset ) ? $.extend( {}, electionConfig, currentElectionPreset ) : $.extend( {}, electionConfig );
+	var currentElectionConfig = ( typeof currentElectionPreset !== 'undefined' ) ? $.extend( {}, electionConfig, currentElectionPreset ) : $.extend( {}, electionConfig );
 
 	// TEMPLATE SELECTORS
 
@@ -1544,7 +1552,7 @@
 
 		var step = 0;
 
-		currentElectionConfig = ( !! currentElectionPreset ) ? $.extend( {}, electionConfig, currentElectionPreset ) : $.extend( {}, electionConfig );
+		currentElectionConfig = ( typeof currentElectionPreset !== 'undefined' ) ? $.extend( {}, electionConfig, currentElectionPreset ) : $.extend( {}, electionConfig );
 
 		var $form = $( this );
 
@@ -2263,7 +2271,7 @@
     					.attr( 'value', itemInputs[ step ][ inputKey ].value )
     				;
 		    		// fill if pre configured
-		    		if ( currentElectionPreset[ key ] ) {
+		    		if ( typeof currentElectionPreset !== 'undefined' && currentElectionPreset[ key ] ) {
 		    			$input.attr( 'checked', '' );
 		    		}
     			}
