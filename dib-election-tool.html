@@ -8,6 +8,8 @@
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 
+		<meta name="robots" content="noindex, nofollow">
+
 		<title>DiB Wahl-Checker</title>
 		
 		<!-- css -->
@@ -37,10 +39,13 @@
 
 						<ul class="mystyle-navbar-nav main-navbar-nav" aria-labelledby="navbarDropdownMenuLink-0">
                             <li class="">
-                                <a class="" href="javascript:void(0);"><i class="fa fa-folder-open-o mr-2" aria-hidden="true"></i>Öffnen</a>
+                                <a class="" href="javascript:void(0);" data-fn="config-load"><i class="fa fa-folder-open-o mr-2" aria-hidden="true"></i>Öffnen</a>
                             </li>
 							<li class="">
-								<a class="" href="javascript:void(0);"><i class="fa fa-floppy-o mr-2" aria-hidden="true"></i>Speichern</a>
+								<a class="" href="javascript:void(0);" data-fn="config-download"><i class="fa fa-floppy-o mr-2" aria-hidden="true"></i>Speichern</a>
+							</li>
+							<li class="">
+								<a class="" href="javascript:void(0);" data-fn="config-reset"><i class="fa fa-trash mr-2" aria-hidden="true"></i>Alles zurücksetzen</a>
 							</li>
 							<li class="dropdown-big columns-3">
 								<a class="mystyle-dropdown-toggle" id="navbarDropdownMenuLink-a0" href="#" data-fn="dropdown-multilevel" aria-haspopup="true" aria-expanded="false">Lorem ipsum</a>
@@ -150,35 +155,32 @@
 						<div style="display: none;" aria-hidden="true">
 
 							<!-- step 0 item template -->
-							<div style="display: none;">
 
-								<div class="card mb-3" style="display: none;" data-tg="election-item-template-0">
-									<div class="card-body p-0">
-										<div class="p-3">
-											<label class="form-check-label">
-												<input class="form-check-input" id="election-check-{{ index }}" type="checkbox" aria-controls="#check-accordion-{{ index }}" aria-expanded="false" data-g-fn="accordion-trigger">
-												{{ title }}
-											</label>
-										</div>
-										<div style="display: none;" id="check-accordion-{{ index }}">
-											<div class="px-3">
-												<table class="table table-striped table-sm table-responsive-md setup-election-table">
-													<thead>
-														<tr>
-															<th scope="col"><i class="fa fa-hashtag" aria-hidden="true"></i> <span>Anzahl</span></th>
-															<th scope="col"><i class="fa fa-briefcase" aria-hidden="true"></i> <span>Funktion</span></th>
-															<th scope="col"><i class="fa fa-chain" aria-hidden="true"></i> <span>gemeinsame Wahl</span></th>
-														</tr>
-													</thead>
-													<!-- step 0 subitem append -->
-													<tbody data-g-tg="election-subitem-append-0">
-													</tbody>
-												</table>
-											</div>
+							<div class="card mb-3" style="display: none;" data-tg="election-item-template-0">
+								<div class="card-body p-0">
+									<div class="p-3">
+										<label class="form-check-label">
+											<input class="form-check-input" id="election-check-{{ index }}" type="checkbox" aria-controls="#check-accordion-{{ index }}" aria-expanded="false" data-g-fn="accordion-trigger">
+											{{ title }}
+										</label>
+									</div>
+									<div style="display: none;" id="check-accordion-{{ index }}">
+										<div class="px-3">
+											<table class="table table-striped table-sm table-responsive-md setup-election-table">
+												<thead>
+													<tr>
+														<th scope="col"><i class="fa fa-hashtag" aria-hidden="true"></i> <span>Anzahl</span></th>
+														<th scope="col"><i class="fa fa-briefcase" aria-hidden="true"></i> <span>Funktion</span></th>
+														<th scope="col"><i class="fa fa-chain" aria-hidden="true"></i> <span>gemeinsame Wahl</span></th>
+													</tr>
+												</thead>
+												<!-- step 0 subitem append -->
+												<tbody data-g-tg="election-subitem-append-0">
+												</tbody>
+											</table>
 										</div>
 									</div>
 								</div>
-
 							</div>
 
 							<!-- step 0 subitem template -->
@@ -497,6 +499,60 @@
 		
 		</div>
 
+		<div class="modal fade" tabindex="-1" role="dialog" data-tg="load-modal">
+			<div class="modal-dialog" role="document">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title">Konfiguration laden</h5>
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+					</div>
+					<form>
+						<div class="modal-body">
+							<!-- div class="custom-file">
+								<input class="custom-file-input" id="load-file" type="file" name="file_name">
+								<label class="custom-file-label" for="load-file">Datei wählen</label>
+							</div -->
+							<input class="btn-block" type="file" name="file_name">
+						</div>
+						<div class="modal-footer">
+							<button class="btn btn-default" data-dismiss="modal"><i class="fa fa-close" aria-hidden="true"></i><span>Abbrechen</span></button>
+							<button class="btn btn-primary" type="submit"><i class="fa fa-upload" aria-hidden="true"></i><span>Laden</span></button>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+
+		<div class="modal fade" tabindex="-1" role="dialog" data-tg="save-modal">
+			<div class="modal-dialog" role="document">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title">Konfiguration sichern</h5>
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+					</div>
+					<form>
+						<div class="modal-body">
+							<label for="save-file-name">Dateiname</label>
+							<div class="input-group">
+								<input class="form-control" id="save-file-name" type="text" name="file_name" placeholder="Dateiname" aria-describedby="save-file-name-append" required>
+								<div class="input-group-append input-group-addon">
+									<span class="input-group-text" id="save-file-name-append">.json</span>
+								</div>
+							</div>
+						</div>
+						<div class="modal-footer">
+							<button class="btn btn-default" data-dismiss="modal"><i class="fa fa-close" aria-hidden="true"></i><span>Abbrechen</span></button>
+							<button class="btn btn-primary" type="submit"><i class="fa fa-download" aria-hidden="true"></i><span>Herunterladen</span></button>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+
 		<div class="modal fade" tabindex="-1" role="dialog" data-tg="confirm-modal">
 			<div class="modal-dialog" role="document">
 				<div class="modal-content">
@@ -510,8 +566,8 @@
 						<p>{{ modalBody }}</p>
 					</div>
 					<div class="modal-footer">
-						<button type="button" class="btn btn-{{ cancelButtonState }}" data-dismiss="modal">Close</button>
-						<button type="button" class="btn btn-{{ confirmButtonState }}" data-fn="confirm-modal-confirm">Save changes</button>
+						<button class="btn btn-{{ cancelButtonState }}" data-dismiss="modal">Close</button>
+						<button class="btn btn-{{ confirmButtonState }}" data-fn="confirm-modal-confirm">Save changes</button>
 					</div>
 				</div>
 			</div>

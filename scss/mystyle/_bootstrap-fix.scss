@@ -1,0 +1,81 @@
+// bootstrap fix
+
+/*
+  - custom file input (missing in bootstrap 4 beta 2)
+*/
+
+// VARIABLES
+
+$custom-file-focus-border-color: $input-border-color !default;
+
+
+
+// STYLES
+
+// File
+//
+// Custom file input.
+
+.custom-file {
+  position: relative;
+  display: inline-block;
+  width: 100%;
+  height: $custom-file-height;
+  margin-bottom: 0;
+}
+
+.custom-file-input {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  height: $custom-file-height;
+  margin: 0;
+  opacity: 0;
+
+  &:focus ~ .custom-file-control {
+    border-color: $custom-file-focus-border-color;
+    box-shadow: $custom-file-focus-box-shadow;
+
+    &::before {
+      border-color: $custom-file-focus-border-color;
+    }
+  }
+
+  
+  & ~ .custom-file-label::after {
+    content: "Browse";
+  }
+}
+
+.custom-file-label {
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  z-index: 1;
+  height: $custom-file-height;
+  padding: $custom-file-padding-y $custom-file-padding-x;
+  line-height: $custom-file-line-height;
+  color: $custom-file-color;
+  background-color: $custom-file-bg;
+  border: $custom-file-border-width solid $custom-file-border-color;
+  @include border-radius($custom-file-border-radius);
+  @include box-shadow($custom-file-box-shadow);
+
+  &::after {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 3;
+    display: block;
+    height: calc(#{$custom-file-height} - #{$custom-file-border-width} * 2);
+    padding: $custom-file-padding-y $custom-file-padding-x;
+    line-height: $custom-file-line-height;
+    color: $custom-file-button-color;
+    content: "Browse";
+    @include gradient-bg($custom-file-button-bg);
+    border-left: $custom-file-border-width solid $custom-file-border-color;
+    @include border-radius(0 $custom-file-border-radius $custom-file-border-radius 0);
+  }
+}

@@ -20,6 +20,9 @@ $fa-font-path: "../fonts/font-awesome" !default;
 // bootstrap
 @import "../node_modules/bootstrap/scss/bootstrap";
 
+// bootstrap fix (fix current bugs, check and update from time to time)
+@import "mystyle/bootstrap-fix";
+
 // mystyle
 @import "mystyle/mixins";
 @import "mystyle/grid";

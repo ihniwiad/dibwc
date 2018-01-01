@@ -1273,6 +1273,8 @@ var MY_UTILS = (function( $ ) {
 	var subitemRemoveIdentifier = '[data-g-fn="election-subitem-remove"]';
 	var validateNumberInputIdentifier = '[data-g-fn="validate"]';
 
+	var downloadFileFallback = 'dib-wahl-checker-';
+
 	// INPUT NAMES
 
 	var itemInputs = [];
@@ -1344,6 +1346,8 @@ var MY_UTILS = (function( $ ) {
 	var electionTitleSeparator = ' » ';
 	var addEmptyCandidatesCount = 3; // add x more empty items then candidates to elect
 	var selectInitialOption = '<option value="-1" selected>Alle</option>';
+
+	// FUNCTIONS
 
 	// replace placeholders
 	$.fn._replaceTemplatePlaceholders = function( replaceArr ) {
@@ -1652,7 +1656,7 @@ var MY_UTILS = (function( $ ) {
 		]
 	}
 
-	(FALL 2: einzelne Wahl -> "joint" == true bzw. typeof "current" === 'object')
+	(FALL 2: einzelne Wahl -> "joint" != true bzw. typeof "current" === 'object')
 
 	input = {
 		"structure": [
@@ -1668,7 +1672,7 @@ var MY_UTILS = (function( $ ) {
 			{
 				"name": "weitere Mitglieder",
 				"count": 2,
-				"joint": true,
+				"joint": false,
 				"overall": true
 			}
 		],
@@ -2674,6 +2678,8 @@ var MY_UTILS = (function( $ ) {
 	// step 0 – config
     _buildStep_0 = function() {
 
+    	// TOFIX?: what about currentElectionPreset vs. currentElectionConfig?
+
     	var step = 0;
 
     	// form
@@ -2685,6 +2691,9 @@ var MY_UTILS = (function( $ ) {
 
         // item subitem
         var $subitemTemplate = Utils.$targetElems.filter( subitemTemplateIdentifierPrefix + step + identifierSuffix );
+
+        // empty before fill
+        $itemAppend.empty();
         
         // build ui for each election type
         for ( var key in electionConfig ) {
@@ -2709,8 +2718,11 @@ var MY_UTILS = (function( $ ) {
     					.attr( formIdentifierAttr, itemInputs[ step ][ inputKey ].name + itemIndex )
     					.attr( 'value', itemInputs[ step ][ inputKey ].value )
     				;
-		    		// fill if pre configured
-		    		if ( typeof currentElectionPreset !== 'undefined' && currentElectionPreset[ key ] ) {
+		    		// fill if pre configured (use currentElectionPreset here since currentElectionConfig will always contain these values at this time)
+		    		if ( 
+		    			typeof currentElectionPreset !== 'undefined' 
+		    			&& currentElectionPreset[ key ] 
+		    		) {
 		    			$input.attr( 'checked', '' );
 		    		}
     			}
@@ -2726,7 +2738,11 @@ var MY_UTILS = (function( $ ) {
 
         		// remove count input or hide checkbox
         		if ( electionConfig[ key ][ i ].countVariable ) {
-        			if ( ! currentElectionConfig[ key ][ i ].count > 1  ) {
+        			if ( 
+        				typeof currentElectionConfig[ key ] !== 'undefined'
+        				&& typeof currentElectionConfig[ key ][ i ] !== 'undefined'
+        				&& ! currentElectionConfig[ key ][ i ].count > 1 
+        			) {
 	        			// hide checkbox
 	        			$subitemClone.find( '[data-tp-o="3"]' ).hide();
         			}
@@ -2765,10 +2781,21 @@ var MY_UTILS = (function( $ ) {
 	    					.attr( 'value', subitemInputs[ step ][ inputKey ].value )
 	    				;
 			    		// fill if pre configured
-			    		if ( $input.is( '[' + formIdentifierAttr + '^="count"]' ) && currentElectionConfig[ key ] && currentElectionConfig[ key ][ i ] && currentElectionConfig[ key ][ i ].countVariable === true && currentElectionConfig[ key ][ i ].count > 0 ) {
+			    		if ( 
+			    			$input.is( '[' + formIdentifierAttr + '^="count"]' ) 
+			    			&& currentElectionConfig[ key ] 
+			    			&& currentElectionConfig[ key ][ i ] 
+			    			&& currentElectionConfig[ key ][ i ].countVariable === true 
+			    			&& currentElectionConfig[ key ][ i ].count > 0 
+			    		) {
 			    			$input.attr( 'value', currentElectionConfig[ key ][ i ].count );
 			    		}
-			    		if ( $input.is( '[type="checkbox"]' ) && currentElectionConfig[ key ] && currentElectionConfig[ key ][ i ] && currentElectionConfig[ key ][ i ].joint === JSON.parse( subitemInputs[ step ].joint.value ) ) {
+			    		if ( 
+			    			$input.is( '[type="checkbox"]' ) 
+			    			&& currentElectionConfig[ key ] 
+			    			&& currentElectionConfig[ key ][ i ] 
+			    			&& currentElectionConfig[ key ][ i ].joint === JSON.parse( subitemInputs[ step ].joint.value ) 
+			    		) {
 			    			$input.attr( 'checked', '' );
 			    		}
         			}
@@ -2822,7 +2849,7 @@ var MY_UTILS = (function( $ ) {
 		}
 		_Navigation.$electionStep[ _Navigation.currentStep + 1 ].hide();
 		_Navigation.$electionStep[ _Navigation.currentStep ].show();
-		_Navigation.toTop();
+		_Navigation._toTop();
 
 		console.log( 'nav prev ' + _Navigation.currentStep );
 	}
@@ -2831,14 +2858,14 @@ var MY_UTILS = (function( $ ) {
 		_Navigation.currentStep = ( _Navigation.currentStep < _Navigation.steps ) ? _Navigation.currentStep + 1 : _Navigation.steps;
 		if ( _Navigation.currentStep < _Navigation.steps - 1 ) {
 			_Navigation.$electionStep[ _Navigation.currentStep - 1 ].hide();
-			_Navigation.toTop();
+			_Navigation._toTop();
 		}
 		_Navigation.$electionStep[ _Navigation.currentStep ].show();
 
 		console.log( 'nav next ' + _Navigation.currentStep );
 	}
 
-	_Navigation.toTop = function() {
+	_Navigation._toTop = function() {
 		//Utils.$scrollRoot.animate( { scrollTop: 0 }, 300 );
 		Utils.$functionElems.filter( '[data-fn="to-top-wrapper"]' ).children( 'a' ).trigger( 'click' );
 	}
@@ -2873,7 +2900,7 @@ var MY_UTILS = (function( $ ) {
     			_Navigation.$electionStep[ i ].hide();
     		}
 
-    		// get select
+    		// get select & form
 
     		if ( Utils.$functionElems.filter( stepSelectIdentifierPrefix + i + identifierSuffix ).length > 0 ) {
     			_Navigation.$select[ i ] = Utils.$functionElems.filter( stepSelectIdentifierPrefix + i + identifierSuffix );
@@ -2909,6 +2936,129 @@ var MY_UTILS = (function( $ ) {
     	}
 
     }
+
+	// download file
+	function _download( content, name, type ) {
+		var a = document.createElement( 'a' );
+		var file = new Blob( [content], { type: type } );
+		a.href = URL.createObjectURL( file );
+		a.download = name;
+		a.click();
+	}
+
+	//save current election config as json file
+	_saveCurrentElectionConfig = function() {
+		// save config if exists
+
+		// TODO: get current config of current step
+		console.log( 'save step: ' + _Navigation.currentStep );
+
+		//[ '_getElectionCurrentConfig_' + ( ( _Navigation.currentStep < _Navigation.steps - 1 ) ? _Navigation.currentStep : _Navigation.steps - 2 ) ]();
+		var currentStep = ( _Navigation.currentStep < _Navigation.steps - 1 ) ? _Navigation.currentStep : _Navigation.steps - 2;
+		Utils.$functionElems.filter( stepFormIdentifierPrefix + currentStep + identifierSuffix )[ ( '_getElectionCurrentConfig_' + currentStep ) ]();
+
+		if ( typeof currentElectionConfig !== 'undefined' ) {
+			var $saveModal = Utils.$targetElems.filter( '[data-tg="save-modal"]' );
+			var $form = $saveModal.find( 'form' );
+			var $fileNameInput = $form.find( 'input[name="file_name"]' );
+
+			var d = new Date,
+			dateString = [ 
+				d.getFullYear(), 
+				( '00' + ( d.getMonth() + 1 ) ).slice( -2 ),
+				( '00' + d.getDate() ).slice( -2 ),
+				( '00' + d.getHours() ).slice( -2 ),
+				( '00' + d.getMinutes() ).slice( -2 ),
+				( '00' + d.getSeconds() ).slice( -2 )
+			].join( '-' );
+			$fileNameInput
+				.val( downloadFileFallback + dateString )
+				.on( 'focus', function() {
+					$( this ).select();
+				} )
+			;
+
+			$saveModal.modal( 'show' );
+			var downloaded = false;
+			$form.on( 'submit', function( event, $saveModal ) {
+				console.log( 'submit' );
+				event.preventDefault();
+				var $form = $( this );
+				var fileName = $fileNameInput.val();
+				if ( fileName && ! downloaded ) {
+					// avoid duplicated download
+					downloaded = true;
+					_download( JSON.stringify( currentElectionConfig ), fileName + '.json', 'application/json' );
+					Utils.$targetElems.filter( '[data-tg="save-modal"]' ).modal( 'hide' );
+				}
+			} );
+		}
+		else {
+			// TODO: fallback message
+		}
+	}
+	// init
+	Utils.$functionElems.filter( '[data-fn="config-download"]' ).on( 'click', function() {
+		Utils.$functionElems.filter( '#toggle-navbar-collapse' ).trigger( 'click' );
+		_saveCurrentElectionConfig();
+	} );
+
+	//load election config from json file
+	_loadCurrentElectionConfig = function() {
+		// save config if exists
+		var $loadModal = Utils.$targetElems.filter( '[data-tg="load-modal"]' );
+		var $form = $loadModal.find( 'form' );
+
+		var $fileInput = $form.find( 'input[name="file_name"]' );
+		var result;
+
+		$loadModal.modal( 'show' );
+
+		$fileInput.on( 'change', function( event ) {
+
+			var files = event.target.files;
+
+			if ( !! files && files.length > 0 ) {
+				var reader = new FileReader();
+
+				reader.onload = ( function( file ) {
+		            return function( event ) {
+						try {
+							result = JSON.parse( event.target.result );
+						} 
+						catch( error ) {
+							console.log( 'error trying to parse json: ' + error );
+						}
+					}
+				} )( files[ 0 ] );
+				reader.readAsText( files[ 0 ] );
+			}
+		} );
+
+
+		$form.on( 'submit', function( event ) {
+			event.preventDefault();
+
+			if ( typeof result !== 'undefined' ) {
+				// set both
+				currentElectionPreset = $.extend( {}, result );
+				currentElectionConfig = $.extend( {}, result );
+
+				Utils.$targetElems.filter( '[data-tg="load-modal"]' ).modal( 'hide' );
+				
+				_buildStep_0();
+
+				// reset file input
+				$fileInput.val( '' );
+			}
+
+		} );
+	}
+	// init
+	Utils.$functionElems.filter( '[data-fn="config-load"]' ).on( 'click', function() {
+		Utils.$functionElems.filter( '#toggle-navbar-collapse' ).trigger( 'click' );
+		_loadCurrentElectionConfig();
+	} );
 
     // init (called from init.js)
     $.fn.dibElection = function() {
