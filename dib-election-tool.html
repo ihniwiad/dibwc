@@ -45,9 +45,9 @@
 								<a class="" href="javascript:void(0);" data-fn="config-download"><i class="fa fa-floppy-o mr-2" aria-hidden="true"></i>Speichern</a>
 							</li>
 							<li class="">
-								<a class="" href="javascript:void(0);" data-fn="config-reset"><i class="fa fa-trash mr-2" aria-hidden="true"></i>Alles zurücksetzen</a>
+								<a class="" href="javascript:void(0);" data-fn="config-delete"><i class="fa fa-trash mr-2" aria-hidden="true"></i>Alles zurücksetzen</a>
 							</li>
-							<li class="dropdown-big columns-3">
+							<!-- li class="dropdown-big columns-3">
 								<a class="mystyle-dropdown-toggle" id="navbarDropdownMenuLink-a0" href="#" data-fn="dropdown-multilevel" aria-haspopup="true" aria-expanded="false">Lorem ipsum</a>
 								<ul class="" aria-labelledby="navbarDropdownMenuLink-a0">
 									<li class="nav-item-back">
@@ -88,7 +88,7 @@
 										</ul>
 									</li>
 								</ul>
-							</li>
+							</li -->
 						</ul>
 
 					</div>
@@ -235,9 +235,10 @@
 							<!-- step 1 buttons -->
 							<div class="row">
 								<div class="col">
-								<button class="btn btn-default" data-fn="election-back-1"><i class="fa fa-arrow-left" aria-hidden="true"></i><span>Zurück</span></button>
+								<button class="btn btn-default" data-fn="election-back-1"><i class="fa fa-arrow-left" aria-hidden="true"></i><span>Wahl konfigurieren</span></button>
 								</div>
 								<div class="col text-right">
+									<button class="btn btn-primary mr-sm-3" data-fn-="election-next-item" style="display: none;"><span>Nächsten Schritt vorbereiten</span><i class="fa fa-arrow-up" aria-hidden="true"></i></button>
 									<button class="btn btn-primary" type="submit"><span>Wahl durchführen</span><i class="fa fa-arrow-right" aria-hidden="true"></i></button>
 								</div>
 							</div>
@@ -342,7 +343,7 @@
 
 							<div class="row">
 								<div class="col">
-								<button class="btn btn-default" data-fn="election-back-2"><i class="fa fa-arrow-left" aria-hidden="true"></i><span>Zurück</span></button>
+								<button class="btn btn-default" data-fn="election-back-2"><i class="fa fa-arrow-left" aria-hidden="true"></i><span>Wahl vorbereiten</span></button>
 								</div>
 								<div class="col text-right">
 									<button class="btn btn-primary" type="submit"><span>Wahl auswerten</span><i class="fa fa-arrow-right" aria-hidden="true"></i></button>
@@ -478,17 +479,8 @@
 
 				<hr>
 
-				<div class="container">
-
-					<div class="row small">
-						<div class="col-sm">
-							<!-- © Copyright 2017 <a href="#">DiB</a -->
-						</div>
-						<div class="col-sm text-right">
-							DiB Wahl-Checker Version 1.0.0
-						</div>
-					</div>
-
+				<div class="container small text-center">
+					DiB Wahl-Checker Version 1.0.0
 				</div>
 				
 			</footer>
@@ -503,7 +495,7 @@
 			<div class="modal-dialog" role="document">
 				<div class="modal-content">
 					<div class="modal-header">
-						<h5 class="modal-title">Konfiguration laden</h5>
+						<h5 class="modal-title">Wahl laden</h5>
 						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 						<span aria-hidden="true">&times;</span>
 					</button>
@@ -529,7 +521,7 @@
 			<div class="modal-dialog" role="document">
 				<div class="modal-content">
 					<div class="modal-header">
-						<h5 class="modal-title">Konfiguration sichern</h5>
+						<h5 class="modal-title">Wahl sichern</h5>
 						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 						<span aria-hidden="true">&times;</span>
 					</button>
@@ -557,17 +549,16 @@
 			<div class="modal-dialog" role="document">
 				<div class="modal-content">
 					<div class="modal-header">
-						<h5 class="modal-title">{{ modalTitle }}</h5>
+						<h5 class="modal-title" data-g-tg="modal-title"></h5>
 						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 						<span aria-hidden="true">&times;</span>
 					</button>
 					</div>
-					<div class="modal-body">
-						<p>{{ modalBody }}</p>
+					<div class="modal-body" data-g-tg="modal-body">
 					</div>
 					<div class="modal-footer">
-						<button class="btn btn-{{ cancelButtonState }}" data-dismiss="modal">Close</button>
-						<button class="btn btn-{{ confirmButtonState }}" data-fn="confirm-modal-confirm">Save changes</button>
+						<button class="btn" data-dismiss="modal" data-g-fn="confirm-modal-dismiss"><i class="fa fa-close" aria-hidden="true" data-g-tg="btn-icon"></i><span data-g-tg="btn-text">Abbrechen</span></button>
+						<button class="btn" data-g-fn="confirm-modal-confirm"><i class="fa fa-check" aria-hidden="true" data-g-tg="btn-icon"></i><span data-g-tg="btn-text">Ok</span></button>
 					</div>
 				</div>
 			</div>

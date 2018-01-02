@@ -1273,7 +1273,7 @@ var MY_UTILS = (function( $ ) {
 	var subitemRemoveIdentifier = '[data-g-fn="election-subitem-remove"]';
 	var validateNumberInputIdentifier = '[data-g-fn="validate"]';
 
-	var downloadFileFallback = 'dib-wahl-checker-';
+	var downloadFileFallback = 'dib_wahl-checker_';
 
 	// INPUT NAMES
 
@@ -2829,6 +2829,209 @@ var MY_UTILS = (function( $ ) {
 
     };
 
+	// download file
+	function _download( content, name, type ) {
+		var a = document.createElement( 'a' );
+		var file = new Blob( [content], { type: type } );
+		a.href = URL.createObjectURL( file );
+		a.download = name;
+		a.click();
+	}
+
+	// save current election config as json file
+	_saveCurrentElectionConfig = function() {
+		// save config if exists
+
+		// get current config of current step
+		console.log( 'save step: ' + _Navigation.currentStep );
+
+		var currentStep = ( _Navigation.currentStep < _Navigation.steps - 1 ) ? _Navigation.currentStep : _Navigation.steps - 2;
+		Utils.$functionElems.filter( stepFormIdentifierPrefix + currentStep + identifierSuffix )[ ( '_getElectionCurrentConfig_' + currentStep ) ]();
+
+		if ( typeof currentElectionConfig !== 'undefined' ) {
+			var $saveModal = Utils.$targetElems.filter( '[data-tg="save-modal"]' );
+			var $form = $saveModal.find( 'form' );
+			var $fileNameInput = $form.find( 'input[name="file_name"]' );
+
+			var d = new Date,
+			dateString = [ 
+				d.getFullYear(), 
+				( '00' + ( d.getMonth() + 1 ) ).slice( -2 ),
+				( '00' + d.getDate() ).slice( -2 )
+			].join( '-' ) + '_' + [ 
+				( '00' + d.getHours() ).slice( -2 ),
+				( '00' + d.getMinutes() ).slice( -2 ),
+				( '00' + d.getSeconds() ).slice( -2 )
+			].join( '-' );
+			$fileNameInput
+				.val( downloadFileFallback + dateString )
+				.on( 'focus', function() {
+					$( this ).select();
+				} )
+			;
+
+			$saveModal.on( 'shown.bs.modal', ( function( fileNameInput ) {
+				setTimeout( function() {
+					$( fileNameInput ).focus();
+				}, 500 );
+			} )( $fileNameInput ) );
+
+			$saveModal.modal( 'show' );
+
+			$form.one( 'submit', function( event, $saveModal ) {
+				console.log( 'submit' );
+				event.preventDefault();
+				var $form = $( this );
+				var fileName = $fileNameInput.val();
+				if ( fileName ) {
+					_download( JSON.stringify( currentElectionConfig ), fileName + '.json', 'application/json' );
+					Utils.$targetElems.filter( '[data-tg="save-modal"]' ).modal( 'hide' );
+				}
+			} );
+		}
+		else {
+			// TODO: fallback message
+		}
+	}
+	// init
+	Utils.$functionElems.filter( '[data-fn="config-download"]' ).on( 'click', function() {
+		Utils.$functionElems.filter( '#toggle-navbar-collapse' ).trigger( 'click' );
+		_saveCurrentElectionConfig();
+	} );
+
+	// load election config from json file
+	_loadCurrentElectionConfig = function() {
+		// save config if exists
+		var $loadModal = Utils.$targetElems.filter( '[data-tg="load-modal"]' );
+		var $form = $loadModal.find( 'form' );
+
+		var $fileInput = $form.find( 'input[name="file_name"]' );
+		var result;
+
+		$loadModal.modal( 'show' );
+
+		$fileInput.on( 'change', function( event ) {
+
+			var files = event.target.files;
+
+			if ( !! files && files.length > 0 ) {
+				var reader = new FileReader();
+
+				reader.onload = ( function( file ) {
+		            return function( event ) {
+						try {
+							result = JSON.parse( event.target.result );
+						} 
+						catch( error ) {
+							console.log( 'error trying to parse json: ' + error );
+						}
+					}
+				} )( files[ 0 ] );
+				reader.readAsText( files[ 0 ] );
+			}
+		} );
+
+		$form.one( 'submit', function( event ) {
+			event.preventDefault();
+
+			if ( typeof result !== 'undefined' ) {
+				// set both
+				currentElectionPreset = $.extend( {}, result );
+				currentElectionConfig = $.extend( {}, result );
+
+				Utils.$targetElems.filter( '[data-tg="load-modal"]' ).modal( 'hide' );
+
+				_buildStep_0();
+
+				// reset file input
+				$fileInput.val( '' );
+			}
+
+		} );
+	}
+	// init
+	Utils.$functionElems.filter( '[data-fn="config-load"]' ).on( 'click', function() {
+		Utils.$functionElems.filter( '#toggle-navbar-collapse' ).trigger( 'click' );
+		_loadCurrentElectionConfig();
+	} );
+
+	// reset election
+	_resetElection = function() {
+
+	}
+
+	// confirm modal
+	$.fn._confirmModal = function( options ) {
+
+        var defaults = {
+			header: 'Bitte bestätigen',
+			headerState: 'modal-title',
+			body: 'Bitte bestätige die Aktion.',
+			dismissButtonState: 'btn btn-default',
+			confirmButtonState: 'btn btn-danger',
+			dismissButtonIcon: 'fa fa-close',
+			confirmButtonIcon: 'fa fa-check',
+			dismissButtonText: 'Abbrechen',
+			confirmButtonText: 'Ok',
+			confirmCallback: null,
+			dismissCallback: null
+        };
+
+        options = $.extend( {}, defaults, options );
+
+        var $modal = $( this );
+
+		$modal.find( '[data-g-tg="modal-title"]' ).html( options.header ).attr( 'class', options.headerState );
+		$modal.find( '[data-g-tg="modal-body"]' ).html( options.body );
+
+		var $confirmButton = $modal.find( '[data-g-fn="confirm-modal-confirm"]' );
+		$confirmButton.attr( 'class', options.confirmButtonState );
+		$confirmButton.find( '[data-g-tg="btn-icon"]' ).attr( 'class', options.confirmButtonIcon );
+		$confirmButton.find( '[data-g-tg="btn-text"]' ).html( options.confirmButtonText );
+
+		var $dismissButton = $modal.find( '[data-g-fn="confirm-modal-dismiss"]' );
+		$dismissButton.attr( 'class', options.dismissButtonState );
+		$dismissButton.find( '[data-g-tg="btn-icon"]' ).attr( 'class', options.dismissButtonIcon );
+		$dismissButton.find( '[data-g-tg="btn-text"]' ).html( options.dismissButtonText );
+
+		$modal.modal( 'show' );
+
+		if ( options.confirmCallback ) {
+			$confirmButton.one( 'click', function() {
+				options.confirmCallback();
+			} );
+		}
+
+		if ( options.dismissCallback ) {
+			$modal.one( 'hide.bs.modal', function() {
+				options.dismissCallback();
+			} );
+		}
+	}
+	// init
+	Utils.$functionElems.filter( '[data-fn="config-delete"]' ).on( 'click', function() {
+
+		Utils.$functionElems.filter( '#toggle-navbar-collapse' ).trigger( 'click' );
+
+		var $confirmModal = Utils.$targetElems.filter( '[data-tg="confirm-modal"]' );
+
+		$confirmModal._confirmModal( {
+			header: 'Bitte bestätigen',
+			headerState: 'modal-title text-danger',
+			body: 'Möchtest Du wirklich die gesamte Wahl zurücksetzen?',
+			dismissButtonState: 'btn btn-default',
+			confirmButtonState: 'btn btn-danger',
+			dismissButtonIcon: 'fa fa-close',
+			confirmButtonIcon: 'fa fa-trash',
+			dismissButtonText: 'Nein, doch nicht',
+			confirmButtonText: 'Zurücksetzen',
+			confirmCallback: function() {
+				window.location.reload();
+			}
+		} );
+	} );
+
+	// navigation
     var _Navigation = {
     	currentStep: 0,
     	steps: 4,
@@ -2900,8 +3103,7 @@ var MY_UTILS = (function( $ ) {
     			_Navigation.$electionStep[ i ].hide();
     		}
 
-    		// get select & form
-
+    		// get select
     		if ( Utils.$functionElems.filter( stepSelectIdentifierPrefix + i + identifierSuffix ).length > 0 ) {
     			_Navigation.$select[ i ] = Utils.$functionElems.filter( stepSelectIdentifierPrefix + i + identifierSuffix );
     			_Navigation.$select[ i ].on( 'change', function() {
@@ -2936,129 +3138,6 @@ var MY_UTILS = (function( $ ) {
     	}
 
     }
-
-	// download file
-	function _download( content, name, type ) {
-		var a = document.createElement( 'a' );
-		var file = new Blob( [content], { type: type } );
-		a.href = URL.createObjectURL( file );
-		a.download = name;
-		a.click();
-	}
-
-	//save current election config as json file
-	_saveCurrentElectionConfig = function() {
-		// save config if exists
-
-		// TODO: get current config of current step
-		console.log( 'save step: ' + _Navigation.currentStep );
-
-		//[ '_getElectionCurrentConfig_' + ( ( _Navigation.currentStep < _Navigation.steps - 1 ) ? _Navigation.currentStep : _Navigation.steps - 2 ) ]();
-		var currentStep = ( _Navigation.currentStep < _Navigation.steps - 1 ) ? _Navigation.currentStep : _Navigation.steps - 2;
-		Utils.$functionElems.filter( stepFormIdentifierPrefix + currentStep + identifierSuffix )[ ( '_getElectionCurrentConfig_' + currentStep ) ]();
-
-		if ( typeof currentElectionConfig !== 'undefined' ) {
-			var $saveModal = Utils.$targetElems.filter( '[data-tg="save-modal"]' );
-			var $form = $saveModal.find( 'form' );
-			var $fileNameInput = $form.find( 'input[name="file_name"]' );
-
-			var d = new Date,
-			dateString = [ 
-				d.getFullYear(), 
-				( '00' + ( d.getMonth() + 1 ) ).slice( -2 ),
-				( '00' + d.getDate() ).slice( -2 ),
-				( '00' + d.getHours() ).slice( -2 ),
-				( '00' + d.getMinutes() ).slice( -2 ),
-				( '00' + d.getSeconds() ).slice( -2 )
-			].join( '-' );
-			$fileNameInput
-				.val( downloadFileFallback + dateString )
-				.on( 'focus', function() {
-					$( this ).select();
-				} )
-			;
-
-			$saveModal.modal( 'show' );
-			var downloaded = false;
-			$form.on( 'submit', function( event, $saveModal ) {
-				console.log( 'submit' );
-				event.preventDefault();
-				var $form = $( this );
-				var fileName = $fileNameInput.val();
-				if ( fileName && ! downloaded ) {
-					// avoid duplicated download
-					downloaded = true;
-					_download( JSON.stringify( currentElectionConfig ), fileName + '.json', 'application/json' );
-					Utils.$targetElems.filter( '[data-tg="save-modal"]' ).modal( 'hide' );
-				}
-			} );
-		}
-		else {
-			// TODO: fallback message
-		}
-	}
-	// init
-	Utils.$functionElems.filter( '[data-fn="config-download"]' ).on( 'click', function() {
-		Utils.$functionElems.filter( '#toggle-navbar-collapse' ).trigger( 'click' );
-		_saveCurrentElectionConfig();
-	} );
-
-	//load election config from json file
-	_loadCurrentElectionConfig = function() {
-		// save config if exists
-		var $loadModal = Utils.$targetElems.filter( '[data-tg="load-modal"]' );
-		var $form = $loadModal.find( 'form' );
-
-		var $fileInput = $form.find( 'input[name="file_name"]' );
-		var result;
-
-		$loadModal.modal( 'show' );
-
-		$fileInput.on( 'change', function( event ) {
-
-			var files = event.target.files;
-
-			if ( !! files && files.length > 0 ) {
-				var reader = new FileReader();
-
-				reader.onload = ( function( file ) {
-		            return function( event ) {
-						try {
-							result = JSON.parse( event.target.result );
-						} 
-						catch( error ) {
-							console.log( 'error trying to parse json: ' + error );
-						}
-					}
-				} )( files[ 0 ] );
-				reader.readAsText( files[ 0 ] );
-			}
-		} );
-
-
-		$form.on( 'submit', function( event ) {
-			event.preventDefault();
-
-			if ( typeof result !== 'undefined' ) {
-				// set both
-				currentElectionPreset = $.extend( {}, result );
-				currentElectionConfig = $.extend( {}, result );
-
-				Utils.$targetElems.filter( '[data-tg="load-modal"]' ).modal( 'hide' );
-				
-				_buildStep_0();
-
-				// reset file input
-				$fileInput.val( '' );
-			}
-
-		} );
-	}
-	// init
-	Utils.$functionElems.filter( '[data-fn="config-load"]' ).on( 'click', function() {
-		Utils.$functionElems.filter( '#toggle-navbar-collapse' ).trigger( 'click' );
-		_loadCurrentElectionConfig();
-	} );
 
     // init (called from init.js)
     $.fn.dibElection = function() {
