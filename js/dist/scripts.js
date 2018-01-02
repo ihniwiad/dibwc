@@ -1875,6 +1875,8 @@ var MY_UTILS = (function( $ ) {
 					}
 				}
 
+				// TODO: use new function _checkElectionConfigCandidatesOrVotes()
+
 				// check if votes
 				var voteFound = false;
 				var missingVoteFound = false;
@@ -2524,22 +2526,25 @@ var MY_UTILS = (function( $ ) {
         }
 
         // get config on submit
-        $form.on( 'submit', function( event ) {
+        $form
+        	.off( 'submit.form.' + step )
+	        .on( 'submit.form.' + step, function( event ) {
 
-        	event.preventDefault();
+	        	event.preventDefault();
 
-        	var $form = $( this );
-        	$form._getElectionCurrentConfig_2();
+	        	var $form = $( this );
+	        	$form._getElectionCurrentConfig_2();
 
-        	// get election result
-        	if ( _getElectionResult() ) {
+	        	// get election result
+	        	if ( _getElectionResult() ) {
 
-				//console.log( 'RESULT (currentElectionConfig): ' + JSON.stringify( currentElectionConfig, null, 2) );
-        		
-        		_buildStep_3();
-        	}
+					//console.log( 'RESULT (currentElectionConfig): ' + JSON.stringify( currentElectionConfig, null, 2) );
+	        		
+	        		_buildStep_3();
+	        	}
 
-        } );
+	        } )
+	    ;
 
     };
 
@@ -2662,16 +2667,19 @@ var MY_UTILS = (function( $ ) {
         }
 
         // get config on submit
-        $form.on( 'submit', function( event ) {
+        $form
+        	.off( 'submit.form.' + step )
+	        .on( 'submit.form.' + step, function( event ) {
 
-        	event.preventDefault();
+	        	event.preventDefault();
 
-        	var $form = $( this );
-        	$form._getElectionCurrentConfig_1();
+	        	var $form = $( this );
+	        	$form._getElectionCurrentConfig_1();
 
-        	_buildStep_2();
+	        	_buildStep_2();
 
-        } );
+	        } )
+	    ;
 
     };
 
@@ -2816,16 +2824,19 @@ var MY_UTILS = (function( $ ) {
         }
 
         // get config on submit
-        $form.on( 'submit', function( event ) {
+        $form
+        	.off( 'submit.form.' + step )
+	        .on( 'submit.form.' + step, function( event ) {
 
-        	event.preventDefault();
+	        	event.preventDefault();
 
-        	var $form = $( this );
-        	$form._getElectionCurrentConfig_0();
+	        	var $form = $( this );
+	        	$form._getElectionCurrentConfig_0();
 
-        	_buildStep_1();
+	        	_buildStep_1();
 
-        } );
+	        } )
+	    ;
 
     };
 
@@ -3031,6 +3042,88 @@ var MY_UTILS = (function( $ ) {
 		} );
 	} );
 
+	// check current config for candidates or votes
+	_checkElectionConfigCandidatesOrVotes = function( keyIndex, i, j ) {
+		// get key
+		var key = Object.keys( currentElectionConfig )[ keyIndex ];
+
+		if ( ! key || typeof i === 'undefined' ) {
+			return false;
+		}
+
+		console.log( 'key: ' + key + ' – i: ' + i + ' – j: ' + j );
+
+		var hasCandidates = false;
+		var hasVotes = false;
+
+		_validCandidatesOrVotes = function( currentCandidatesList ) {
+
+			console.log( '_validCandidatesOrVotes' );
+
+			var missingCandidates = false;
+			var missingVotes = false;
+
+			for ( var k = 0; k < currentCandidatesList.length; k++ ) {
+				console.log( 'k: ' + k );
+				if ( typeof currentCandidatesList[ k ].candidate === 'undefined' ) {
+					missingCandidates = true;
+					console.log( 'missingCandidates: ' + missingCandidates );
+				}
+				if ( 
+					typeof currentCandidatesList[ k ].yes === 'undefined' 
+					|| typeof currentCandidatesList[ k ].no === 'undefined' 
+				) {
+					missingVotes = true;
+					console.log( 'missingVotes: ' + missingVotes );
+				}
+			}
+
+			return [ ! missingCandidates, ! missingVotes ];
+		}
+
+		// get current candidates to check
+		var candidatesList;
+
+		if (
+			typeof currentElectionConfig[ key ] !== 'undefined'
+			&& typeof currentElectionConfig[ key ][ i ] !== 'undefined'
+			&& typeof currentElectionConfig[ key ][ i ].candidates !== 'undefined'
+			&& currentElectionConfig[ key ][ i ].candidates.length > 0
+		) {
+			console.log( 'candidates object found' );
+			if ( typeof j === 'undefined' ) {
+				console.log( 'joint' );
+				// joint election, one candidates list
+				if (
+					typeof currentElectionConfig[ key ][ i ].candidates[ 0 ] !== 'undefined'
+				) {
+					//console.log( 'candidatesList' );
+					candidatesList = currentElectionConfig[ key ][ i ].candidates;
+				}
+			}
+			else {
+				console.log( 'single' );
+				// single election, multiple candidates list
+				if (
+					typeof currentElectionConfig[ key ][ i ].candidates[ j ] !== 'undefined'
+					&& currentElectionConfig[ key ][ i ].candidates[ j ].length > 0
+					&& typeof currentElectionConfig[ key ][ i ].candidates[ j ][ 0 ] !== 'undefined'
+					//&& currentElectionConfig[ key ][ i ].candidates[ j ][ 0 ].length > 0
+					//&& typeof currentElectionConfig[ key ][ i ].candidates[ j ][ 0 ].candidate !== 'undefined'
+				) {
+					//console.log( 'candidatesList' );
+					candidatesList = currentElectionConfig[ key ][ i ].candidates[ j ];
+				}
+			}
+
+		}
+
+		var result = _validCandidatesOrVotes( candidatesList );
+
+		return [ result[ 0 ], result[ 1 ] ];
+
+	}
+
 	// navigation
     var _Navigation = {
     	currentStep: 0,
@@ -3095,6 +3188,14 @@ var MY_UTILS = (function( $ ) {
     			_Navigation.$stepNext[ i ] = Utils.$functionElems.filter( stepFormIdentifierPrefix + i + identifierSuffix );
     			_Navigation.$stepNext[ i ].on( 'submit', function() {
     				_Navigation._next();
+
+    				// TODO BEFORE: allow execute election only if (minimum) first item has candidates
+    				// TODO: if step == 2 set select to 1st item
+    				if ( _Navigation.currentStep == 2 ) {
+    					// iterate each selection
+    					//_Navigation.$select[ _Navigation.currentStep ].
+    				}
+
     			} );
     		}
 
@@ -3113,6 +3214,13 @@ var MY_UTILS = (function( $ ) {
     				var $form = $( this ).closest( 'form' );
 
     				if ( value != -1 ) {
+
+	    				// TEST – TODO: remove
+	    				var selectCoordinates = value.split( inputIdentifierSeparator );
+
+	    				var check = _checkElectionConfigCandidatesOrVotes( selectCoordinates[ 0 ], selectCoordinates[ 1 ], selectCoordinates[ 2 ] );
+	    				console.log( 'check for candidates & votes: ' + check[ 0 ] + ' – ' + check[ 1 ] );
+						
 	    				// hide all
 	    				$form
 	    					.find( '[' + itemIdAttr + ']' )
