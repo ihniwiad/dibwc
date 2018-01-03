@@ -2409,7 +2409,7 @@ var MY_UTILS = (function( $ ) {
 	        var electionGroup = key;
 
 	        // fill select
-	        _Navigation.$select[ step ].append( '<option value="' + itemIndex + '">' + electionGroup + '</option>' );
+	        //_Navigation.$select[ step ].append( '<option value="' + itemIndex + '">' + electionGroup + '</option>' );
 
         	// elections within group
 			for ( var i = 0; i < currentElectionConfig[ key ].length; i++ ) {
@@ -2579,7 +2579,7 @@ var MY_UTILS = (function( $ ) {
 	        var electionGroup = key;
 
 	        // fill select
-	        _Navigation.$select[ step ].append( '<option value="' + itemIndex + '">' + electionGroup + '</option>' );
+	        //_Navigation.$select[ step ].append( '<option value="' + itemIndex + '">' + electionGroup + '</option>' );
 
         	// elections within group
 			for ( var i = 0; i < currentElectionConfig[ key ].length; i++ ) {
@@ -3063,22 +3063,28 @@ var MY_UTILS = (function( $ ) {
 			var missingCandidates = false;
 			var missingVotes = false;
 
-			for ( var k = 0; k < currentCandidatesList.length; k++ ) {
-				console.log( 'k: ' + k );
-				if ( typeof currentCandidatesList[ k ].candidate === 'undefined' ) {
-					missingCandidates = true;
-					console.log( 'missingCandidates: ' + missingCandidates );
-				}
-				if ( 
-					typeof currentCandidatesList[ k ].yes === 'undefined' 
-					|| typeof currentCandidatesList[ k ].no === 'undefined' 
-				) {
-					missingVotes = true;
-					console.log( 'missingVotes: ' + missingVotes );
-				}
-			}
+			if ( typeof currentCandidatesList !== 'undefined' ) {
 
-			return [ ! missingCandidates, ! missingVotes ];
+				for ( var k = 0; k < currentCandidatesList.length; k++ ) {
+					console.log( 'k: ' + k );
+					if ( typeof currentCandidatesList[ k ].candidate === 'undefined' ) {
+						missingCandidates = true;
+						console.log( 'missingCandidates: ' + missingCandidates );
+					}
+					if ( 
+						typeof currentCandidatesList[ k ].yes === 'undefined' 
+						|| typeof currentCandidatesList[ k ].no === 'undefined' 
+					) {
+						missingVotes = true;
+						console.log( 'missingVotes: ' + missingVotes );
+					}
+				}
+
+				return [ ! missingCandidates, ! missingVotes ];
+			}
+			else {
+				return [ false, false ];
+			}
 		}
 
 		// get current candidates to check
